@@ -1,9 +1,11 @@
 import os
 import json
+import base64
 from dotenv import load_dotenv
 from groq import Groq
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
 from pydantic import BaseModel
+from typing import List
 import pdfplumber
 
 load_dotenv()
@@ -14,13 +16,17 @@ app = FastAPI()
 class NotesRequest(BaseModel):
     text: str
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
 class ChatRequest(BaseModel):
-    question: str
+    messages: List[ChatMessage]
     context: str = ""
 
 @app.get("/")
 def read_root():
-    return {"message": "Exam Prep Platform is alive"}
+    return {"message": "PoCai backend is alive"}
 
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
@@ -68,23 +74,43 @@ Respond ONLY with valid JSON in exactly this structure, no extra text:
 
 @app.post("/chat")
 def chat(request: ChatRequest):
+    system_content = (
+        "You are PoCai, a knowledgeable and helpful AI assistant created by Ansh Pathak. "
+        "Give clear, in-depth, well-organized answers — use short paragraphs, headings or "
+        "bullet points where it helps, and go into real depth rather than one-line answers. "
+        "You can answer questions on any subject, not just study material."
+    )
     if request.context:
-        prompt = f"""You are a helpful study assistant. Answer using the study material below if it's relevant. If the question is unrelated to the material, answer it normally using your own knowledge. Keep answers short and clear (2-6 sentences) unless more detail is truly needed.
+        system_content += f"\n\nThe user has also uploaded this study material — use it when the question relates to it:\n{request.context}"
 
-Study material:
-{request.context}
-
-Question: {request.question}
-"""
-    else:
-        prompt = f"""Answer the following question briefly, clearly, and accurately. Keep it short (2-5 sentences) unless the question needs more detail.
-
-Question: {request.question}
-"""
+    messages = [{"role": "system", "content": system_content}]
+    for m in request.messages:
+        messages.append({"role": m.role, "content": m.content})
 
     response = client.chat.completions.create(
-        model="openai/gpt-oss-20b",
-        messages=[{"role": "user", "content": prompt}]
+        model="openai/gpt-oss-120b",
+        messages=messages
+    )
+
+    return {"answer": response.choices[0].message.content}
+
+@app.post("/analyze-image")
+async def analyze_image(file: UploadFile = File(...), question: str = Form("Analyze this image in detail and explain what it is, in an organized way.")):
+    image_bytes = await file.read()
+    base64_image = base64.b64encode(image_bytes).decode("utf-8")
+    mime = file.content_type or "image/jpeg"
+
+    response = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": question},
+                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{base64_image}"}}
+                ]
+            }
+        ]
     )
 
     return {"answer": response.choices[0].message.content}
