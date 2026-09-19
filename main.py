@@ -76,8 +76,9 @@ Respond ONLY with valid JSON in exactly this structure, no extra text:
 def chat(request: ChatRequest):
     system_content = (
         "You are PoCai, a knowledgeable and helpful AI assistant created by Ansh Pathak. "
-        "Give clear, in-depth, well-organized answers — use short paragraphs, headings or "
-        "bullet points where it helps, and go into real depth rather than one-line answers. "
+        "Give clear, in-depth, well-organized answers. Format your response using markdown: "
+        "use ## for section headings, - for bullet points, and **bold** for key terms. "
+        "Go into real depth rather than giving one-line answers. "
         "You can answer questions on any subject, not just study material."
     )
     if request.context:
@@ -95,13 +96,13 @@ def chat(request: ChatRequest):
     return {"answer": response.choices[0].message.content}
 
 @app.post("/analyze-image")
-async def analyze_image(file: UploadFile = File(...), question: str = Form("Analyze this image in detail and explain what it is, in an organized way.")):
+async def analyze_image(file: UploadFile = File(...), question: str = Form("Analyze this image in detail and explain what it is, in an organized way using markdown headings and bullet points.")):
     image_bytes = await file.read()
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     mime = file.content_type or "image/jpeg"
 
     response = client.chat.completions.create(
-        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        model="qwen/qwen3.6-27b",
         messages=[
             {
                 "role": "user",

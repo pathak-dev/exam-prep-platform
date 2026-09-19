@@ -7,54 +7,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b0d13;
-    --surface: #151822;
-    --surface-alt: #1c202c;
-    --border: #2a2f3d;
-    --accent: #f2b705;
-    --accent-glow: rgba(242, 183, 5, 0.25);
-    --accent-dim: #caa23f;
-    --text: #e7e9ee;
-    --text-muted: #8891a3;
+    --bg: #0b0d13; --surface: #151822; --surface-alt: #1c202c; --border: #2a2f3d;
+    --accent: #f2b705; --accent-glow: rgba(242, 183, 5, 0.25); --accent-dim: #caa23f;
+    --text: #e7e9ee; --text-muted: #8891a3;
   }
   * { box-sizing: border-box; }
-  html, body {
-    margin: 0; height: 100%; background: var(--bg); color: var(--text);
-    font-family: 'Inter', sans-serif; overflow: hidden;
-  }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow: hidden; }
   body { display: flex; flex-direction: column; position: relative; }
   .glow { position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.35; pointer-events: none; z-index: 0; }
   .glow-1 { width: 420px; height: 420px; background: var(--accent); top: -120px; left: -100px; animation: drift1 22s ease-in-out infinite; }
   .glow-2 { width: 320px; height: 320px; background: #4a6ee0; bottom: -100px; right: -80px; opacity: 0.22; animation: drift2 26s ease-in-out infinite; }
-  @keyframes drift1 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(60px,40px); } }
-  @keyframes drift2 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-50px,-30px); } }
+  @keyframes drift1 { 0%,100% { transform: translate(0,0);} 50% { transform: translate(60px,40px);} }
+  @keyframes drift2 { 0%,100% { transform: translate(0,0);} 50% { transform: translate(-50px,-30px);} }
 
-  header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 28px; border-bottom: 1px solid var(--border);
-    background: rgba(21,24,34,0.7); backdrop-filter: blur(10px); position: relative; z-index: 2;
-  }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid var(--border); background: rgba(21,24,34,0.7); backdrop-filter: blur(10px); position: relative; z-index: 2; }
   .brand { display: flex; align-items: center; gap: 10px; }
-  .logo-mark {
-    width: 34px; height: 34px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), #ffdb6b);
-    box-shadow: 0 0 18px var(--accent-glow);
-    animation: pulseMark 3s ease-in-out infinite;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #14161c;
-  }
-  @keyframes pulseMark { 0%,100% { box-shadow: 0 0 12px var(--accent-glow); } 50% { box-shadow: 0 0 26px var(--accent-glow); } }
+  .logo-mark { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--accent), #ffdb6b); box-shadow: 0 0 18px var(--accent-glow); animation: pulseMark 3s ease-in-out infinite; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; color: #14161c; }
+  @keyframes pulseMark { 0%,100% { box-shadow: 0 0 12px var(--accent-glow);} 50% { box-shadow: 0 0 26px var(--accent-glow);} }
   .brand-text { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
   .brand-text span { color: var(--accent); }
   .brand-tagline { font-size: 11.5px; color: var(--text-muted); margin-top: -2px; }
   .header-right { display: flex; align-items: center; gap: 10px; }
   .material-status { font-size: 12.5px; color: var(--text-muted); }
   .material-status.active { color: var(--accent); }
-  .ghost-btn {
-    background: transparent; border: 1px solid var(--border); color: var(--text);
-    padding: 8px 14px; border-radius: 7px; font-size: 13px; cursor: pointer;
-    font-family: 'Inter', sans-serif; transition: all 0.15s ease;
-  }
+  .ghost-btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 7px; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s ease; }
   .ghost-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
   .ghost-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
@@ -62,18 +38,27 @@
   #chat::-webkit-scrollbar { width: 6px; }
   #chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-  .msg { max-width: 78%; padding: 12px 16px; border-radius: 10px; line-height: 1.6; font-size: 14.5px; animation: rise 0.3s cubic-bezier(.2,.8,.3,1); white-space: pre-wrap; }
-  @keyframes rise { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .msg { max-width: 78%; padding: 12px 16px; border-radius: 10px; line-height: 1.6; font-size: 14.5px; animation: rise 0.3s cubic-bezier(.2,.8,.3,1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px) scale(0.98);} to { opacity: 1; transform: translateY(0) scale(1);} }
   .msg.ai { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-top-left-radius: 2px; }
-  .msg.user { align-self: flex-end; background: var(--surface-alt); border-right: 2px solid var(--accent); border-top-right-radius: 2px; }
+  .msg.user { align-self: flex-end; background: var(--surface-alt); border-right: 2px solid var(--accent); border-top-right-radius: 2px; white-space: pre-wrap; }
   .msg.system { align-self: center; background: transparent; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border); }
   .msg img { max-width: 100%; border-radius: 8px; margin-top: 6px; display: block; }
+
+  .msg.ai h3, .msg.ai h4, .msg.ai h5 { font-family: 'Space Grotesk', sans-serif; color: var(--accent); margin: 10px 0 6px; }
+  .msg.ai h3 { font-size: 16px; }
+  .msg.ai h4 { font-size: 15px; }
+  .msg.ai h5 { font-size: 13.5px; }
+  .msg.ai p { margin: 6px 0; }
+  .msg.ai ul, .msg.ai ol { margin: 6px 0; padding-left: 20px; }
+  .msg.ai li { margin: 3px 0; }
+  .msg.ai strong { color: var(--text); font-weight: 600; }
 
   .typing { display: flex; gap: 4px; align-self: flex-start; padding: 14px 16px; }
   .typing span { width: 6px; height: 6px; background: var(--accent-dim); border-radius: 50%; animation: bounce 1.2s infinite ease-in-out; }
   .typing span:nth-child(2) { animation-delay: 0.15s; }
   .typing span:nth-child(3) { animation-delay: 0.3s; }
-  @keyframes bounce { 0%,60%,100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-5px); opacity: 1; } }
+  @keyframes bounce { 0%,60%,100% { transform: translateY(0); opacity: 0.5;} 30% { transform: translateY(-5px); opacity: 1;} }
 
   .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; align-self: stretch; animation: rise 0.3s ease; }
   .topic-card h3 { font-family: 'Space Grotesk', sans-serif; color: var(--accent); margin: 0 0 8px 0; font-size: 17px; }
@@ -82,28 +67,20 @@
   .topic-card ul { margin: 4px 0; padding-left: 18px; font-size: 14px; }
 
   #composer { border-top: 1px solid var(--border); background: rgba(21,24,34,0.7); backdrop-filter: blur(10px); padding: 14px 24px 18px; position: relative; z-index: 2; }
-  .composer-inner {
-    max-width: 760px; margin: 0 auto; display: flex; gap: 6px; align-items: center;
-    background: var(--surface-alt); border: 1px solid var(--border); border-radius: 10px;
-    padding: 6px 6px 6px 10px; transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  }
+  .composer-inner { max-width: 760px; margin: 0 auto; display: flex; gap: 6px; align-items: center; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 10px; padding: 6px 6px 6px 10px; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
   .composer-inner:focus-within { border-color: var(--accent-dim); box-shadow: 0 0 0 3px var(--accent-glow); }
   #questionInput { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Inter', sans-serif; font-size: 14.5px; padding: 10px 0; }
   #questionInput::placeholder { color: var(--text-muted); }
   .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 8px; border-radius: 7px; display: flex; transition: all 0.15s ease; font-size: 16px; }
   .icon-btn:hover { color: var(--accent); background: var(--surface); }
-  #sendBtn {
-    background: var(--accent); color: #14161c; border: none; padding: 9px 18px; border-radius: 7px;
-    font-weight: 600; font-size: 13.5px; cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: transform 0.1s ease, background 0.15s ease;
-  }
+  #sendBtn { background: var(--accent); color: #14161c; border: none; padding: 9px 18px; border-radius: 7px; font-weight: 600; font-size: 13.5px; cursor: pointer; font-family: 'Inter', sans-serif; transition: transform 0.1s ease, background 0.15s ease; }
   #sendBtn:hover { background: #ffcb2b; transform: translateY(-1px); }
   #sendBtn:active { transform: translateY(0) scale(0.97); }
   input[type="file"] { display: none; }
 
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 10; animation: fadeIn 0.2s ease; }
   .overlay.open { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeIn { from { opacity: 0;} to { opacity: 1;} }
   .about-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; max-width: 460px; width: 90%; padding: 28px; animation: rise 0.25s ease; }
   .about-panel h2 { font-family: 'Space Grotesk', sans-serif; margin: 0 0 4px 0; font-size: 22px; }
   .about-panel h2 span { color: var(--accent); }
@@ -170,10 +147,43 @@ const questionInput = document.getElementById("questionInput");
 const notesBtn = document.getElementById("notesBtn");
 const materialStatus = document.getElementById("materialStatus");
 
+function formatMarkdown(text) {
+  const escapeHtml = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const lines = text.split("\n");
+  let html = "";
+  let inUl = false, inOl = false;
+
+  function closeLists() {
+    if (inUl) { html += "</ul>"; inUl = false; }
+    if (inOl) { html += "</ol>"; inOl = false; }
+  }
+
+  lines.forEach(rawLine => {
+    let line = escapeHtml(rawLine);
+    line = line.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    line = line.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    const trimmed = rawLine.trim();
+
+    if (/^### /.test(trimmed)) { closeLists(); html += `<h5>${line.replace(/^###\s*/, "")}</h5>`; }
+    else if (/^## /.test(trimmed)) { closeLists(); html += `<h4>${line.replace(/^##\s*/, "")}</h4>`; }
+    else if (/^# /.test(trimmed)) { closeLists(); html += `<h3>${line.replace(/^#\s*/, "")}</h3>`; }
+    else if (/^[-*]\s+/.test(trimmed)) { if (!inUl) { closeLists(); html += "<ul>"; inUl = true; } html += `<li>${line.replace(/^[-*]\s+/, "")}</li>`; }
+    else if (/^\d+\.\s+/.test(trimmed)) { if (!inOl) { closeLists(); html += "<ol>"; inOl = true; } html += `<li>${line.replace(/^\d+\.\s+/, "")}</li>`; }
+    else if (trimmed === "") { closeLists(); }
+    else { closeLists(); html += `<p>${line}</p>`; }
+  });
+  closeLists();
+  return html;
+}
+
 function addMessage(text, role) {
   const div = document.createElement("div");
   div.className = "msg " + role;
-  div.innerText = text;
+  if (role === "ai") {
+    div.innerHTML = formatMarkdown(text);
+  } else {
+    div.innerText = text;
+  }
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
   return div;
@@ -194,7 +204,6 @@ function hideTyping() {
 
 addMessage("Hey! I'm PoCai. Ask me anything, upload a PDF for notes, or upload an image to have it analyzed.", "ai");
 
-// About modal
 document.getElementById("aboutBtn").addEventListener("click", () => {
   document.getElementById("aboutOverlay").classList.add("open");
 });
@@ -205,7 +214,6 @@ document.getElementById("aboutOverlay").addEventListener("click", (e) => {
   if (e.target.id === "aboutOverlay") e.target.classList.remove("open");
 });
 
-// PDF upload
 document.getElementById("pdfBtn").addEventListener("click", () => document.getElementById("pdfInput").click());
 
 document.getElementById("pdfInput").addEventListener("change", async (e) => {
@@ -229,7 +237,6 @@ document.getElementById("pdfInput").addEventListener("change", async (e) => {
   addMessage("Got it — material loaded. Ask me anything about it, or anything else.", "ai");
 });
 
-// Image upload
 document.getElementById("imgBtn").addEventListener("click", () => document.getElementById("imgInput").click());
 
 document.getElementById("imgInput").addEventListener("change", async (e) => {
@@ -253,12 +260,10 @@ document.getElementById("imgInput").addEventListener("change", async (e) => {
   const answer = data.answer || "Couldn't analyze that image.";
   addMessage(answer, "ai");
 
-  // Add to conversation memory so follow-up questions can reference it
   conversationHistory.push({ role: "user", content: "[Uploaded an image]" });
   conversationHistory.push({ role: "assistant", content: answer });
 });
 
-// Send question (with full memory)
 async function sendQuestion() {
   const question = questionInput.value.trim();
   if (!question) return;
@@ -284,7 +289,6 @@ async function sendQuestion() {
 document.getElementById("sendBtn").addEventListener("click", sendQuestion);
 questionInput.addEventListener("keydown", (e) => { if (e.key === "Enter") sendQuestion(); });
 
-// Generate full notes
 notesBtn.addEventListener("click", async () => {
   if (!lastExtractedText) return;
 
