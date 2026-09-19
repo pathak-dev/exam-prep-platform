@@ -5,29 +5,47 @@ from datetime import datetime
 from dotenv import load_dotenv
 from groq import Groq
 from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import pdfplumber
 
 load_dotenv()
+
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 app = FastAPI()
 
+# CORS - allows the Netlify frontend to communicate with this backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://whimsical-sable-213f80.netlify.app"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 class NotesRequest(BaseModel):
     text: str
+
 
 class ChatMessage(BaseModel):
     role: str
     content: str
 
+
 class ChatRequest(BaseModel):
     messages: List[ChatMessage]
     context: str = ""
 
+
 @app.get("/")
 def read_root():
     return {"message": "PoCai backend is alive"}
+
 
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
@@ -37,9 +55,15 @@ async def upload_pdf(file: UploadFile = File(...)):
     with pdfplumber.open(file.file) as pdf:
         text = ""
         for page in pdf.pages:
-            text += page.extract_text()
+            extracted = page.extract_text()
+            if extracted:
+                text += extracted
 
-    return {"filename": file.filename, "extracted_text": text}
+    return {
+        "filename": file.filename,
+        "extracted_text": text
+    }
+
 
 @app.post("/generate-notes")
 def generate_notes(request: NotesRequest):
@@ -66,45 +90,87 @@ Respond ONLY with valid JSON in exactly this structure, no extra text:
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
-        messages=[{"role": "user", "content": prompt}],
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
         response_format={"type": "json_object"}
     )
 
-    notes_data = json.loads(response.choices[0].message.content)
+    notes_data = json.loads(
+        response.choices[0].message.content
+    )
+
     return notes_data
+
 
 @app.post("/chat")
 def chat(request: ChatRequest):
-    current_time = datetime.now().strftime("%A, %B %d, %Y — %I:%M %p")
+    current_time = datetime.now().strftime(
+        "%A, %B %d, %Y — %I:%M %p"
+    )
 
     system_content = (
-        "You are PoCai, a friendly and sharp AI assistant created by Ansh Pathak — you talk like a smart friend explaining "
-        "something, not like a textbook or a corporate AI. Use simple, everyday words. Avoid stiff, overly formal, or "
-        "'AI-sounding' phrasing. Get straight to the point — no unnecessary preamble, no repeating the question back. "
+        "You are PoCai, a friendly and sharp AI assistant created by Ansh Pathak — "
+        "you talk like a smart friend explaining something, not like a textbook or a corporate AI. "
+        "Use simple, everyday words. Avoid stiff, overly formal, or 'AI-sounding' phrasing. "
+        "Get straight to the point — no unnecessary preamble, no repeating the question back. "
         f"The current date and time is: {current_time}. "
-        "By default, keep answers SHORT — around 3 to 4 lines, clear and logical, covering the key point directly. "
-        "Only go long and detailed (using markdown ## headings and - bullet points) if the user explicitly asks for "
-        "more detail, depth, or a full explanation. "
+        "By default, keep answers SHORT — around 3 to 4 lines, clear and logical, "
+        "covering the key point directly. "
+        "Only go long and detailed (using markdown ## headings and - bullet points) "
+        "if the user explicitly asks for more detail, depth, or a full explanation. "
         "You can answer questions on any subject, not just study material."
     )
-    if request.context:
-        system_content += f"\n\nThe user has also uploaded this study material — use it when the question relates to it:\n{request.context}"
 
-    messages = [{"role": "system", "content": system_content}]
+    if request.context:
+        system_content += (
+            "\n\nThe user has also uploaded this study material — "
+            "use it when the question relates to it:\n"
+            f"{request.context}"
+        )
+
+    messages = [
+        {
+            "role": "system",
+            "content": system_content
+        }
+    ]
+
     for m in request.messages:
-        messages.append({"role": m.role, "content": m.content})
+        messages.append(
+            {
+                "role": m.role,
+                "content": m.content
+            }
+        )
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=messages
     )
 
-    return {"answer": response.choices[0].message.content}
+    return {
+        "answer": response.choices[0].message.content
+    }
+
 
 @app.post("/analyze-image")
-async def analyze_image(file: UploadFile = File(...), question: str = Form("Analyze this image in detail and explain what it is, in an organized way using markdown headings and bullet points.")):
+async def analyze_image(
+    file: UploadFile = File(...),
+    question: str = Form(
+        "Analyze this image in detail and explain what it is, "
+        "in an organized way using markdown headings and bullet points."
+    )
+):
     image_bytes = await file.read()
-    base64_image = base64.b64encode(image_bytes).decode("utf-8")
+
+    base64_image = base64.b64encode(
+        image_bytes
+    ).decode("utf-8")
+
     mime = file.content_type or "image/jpeg"
 
     response = client.chat.completions.create(
@@ -113,12 +179,22 @@ async def analyze_image(file: UploadFile = File(...), question: str = Form("Anal
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": question},
-                    {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{base64_image}"}}
+                    {
+                        "type": "text",
+                        "text": question
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{mime};base64,{base64_image}"
+                        }
+                    }
                 ]
             }
         ],
         max_completion_tokens=800
     )
 
-    return {"answer": response.choices[0].message.content}
+    return {
+        "answer": response.choices[0].message.content
+    }
