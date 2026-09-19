@@ -1,0 +1,13 @@
+{
+  "name": "PoCai - AI Study Assistant",
+  "short_name": "PoCai",
+  "description": "Ask anything. Study anything. Built by Ansh Pathak.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0d13",
+  "theme_color": "#f2b705",
+  "icons": [
+    { "src": "icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}

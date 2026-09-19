@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <title>PoCai — Ask Anything</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#f2b705">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -470,6 +473,10 @@ notesBtn.addEventListener("click", async () => {
   });
   chatEl.scrollTop = chatEl.scrollHeight;
 });
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js").catch(() => {});
+}
 </script>
 </body>
 </html>
