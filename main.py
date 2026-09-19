@@ -1,6 +1,7 @@
 import os
 import json
 import base64
+from datetime import datetime
 from dotenv import load_dotenv
 from groq import Groq
 from fastapi import FastAPI, UploadFile, File, Form
@@ -74,11 +75,16 @@ Respond ONLY with valid JSON in exactly this structure, no extra text:
 
 @app.post("/chat")
 def chat(request: ChatRequest):
+    current_time = datetime.now().strftime("%A, %B %d, %Y — %I:%M %p")
+
     system_content = (
-        "You are PoCai, a knowledgeable and helpful AI assistant created by Ansh Pathak. "
-        "Give clear, in-depth, well-organized answers. Format your response using markdown: "
-        "use ## for section headings, - for bullet points, and **bold** for key terms. "
-        "Go into real depth rather than giving one-line answers. "
+        "You are PoCai, a friendly and sharp AI assistant created by Ansh Pathak — you talk like a smart friend explaining "
+        "something, not like a textbook or a corporate AI. Use simple, everyday words. Avoid stiff, overly formal, or "
+        "'AI-sounding' phrasing. Get straight to the point — no unnecessary preamble, no repeating the question back. "
+        f"The current date and time is: {current_time}. "
+        "By default, keep answers SHORT — around 3 to 4 lines, clear and logical, covering the key point directly. "
+        "Only go long and detailed (using markdown ## headings and - bullet points) if the user explicitly asks for "
+        "more detail, depth, or a full explanation. "
         "You can answer questions on any subject, not just study material."
     )
     if request.context:
@@ -111,7 +117,8 @@ async def analyze_image(file: UploadFile = File(...), question: str = Form("Anal
                     {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{base64_image}"}}
                 ]
             }
-        ]
+        ],
+        max_completion_tokens=800
     )
 
     return {"answer": response.choices[0].message.content}
