@@ -102,7 +102,7 @@ async def analyze_image(file: UploadFile = File(...), question: str = Form("Anal
     mime = file.content_type or "image/jpeg"
 
     response = client.chat.completions.create(
-        model="qwen/qwen3.6-27b",
+        model="qwen/qwen3.8-27b",
         messages=[
             {
                 "role": "user",
